@@ -5,7 +5,7 @@
 
 static Processo* first;
 static Processo* last;
-int n;
+static int n;
 
 void fila_espera_init() {
     first = NULL;
@@ -52,7 +52,6 @@ Processo* fila_espera_sai() {
     }
     else if(n == 1) {
         Processo* auxiliar;
-
         auxiliar = first;
         first = NULL;
         last = NULL;
@@ -61,9 +60,18 @@ Processo* fila_espera_sai() {
         return auxiliar;
 
     }
+    else if(n == 2) {
+        Processo* auxiliar;
+        auxiliar = first;
+        auxiliar->anterior->proximo = NULL;
+        auxiliar->proximo->anterior = NULL;
+        first = first->proximo;
+        n--;
+
+        return auxiliar;
+    }
     else {
         Processo* auxiliar;
-
         auxiliar = first;
         auxiliar->anterior->proximo = first->proximo;
         auxiliar->proximo->anterior = first->anterior;
@@ -74,26 +82,22 @@ Processo* fila_espera_sai() {
     }
 }
 
-Processo* fila_espera_itera() {
+void fila_espera_itera() {
     if(fila_espera_vazia()) {
         printf("Erro! A fila está vazia, não se pode iterar!\n");
         return NULL;
     }
     else {
         Processo* auxiliar = first;
-
-        auxiliar->permanencia_CPU++;
+        auxiliar->permanencia_espera++;
         auxiliar->permanencia_total++;
-        auxiliar->ut--;
-
         auxiliar = auxiliar->proximo;
+
         while(auxiliar != NULL && auxiliar != first) {
-            auxiliar->permanencia_CPU++;
+            auxiliar->permanencia_espera++;
             auxiliar->permanencia_total++;
             auxiliar = auxiliar->proximo;
         }
-
-        return first;
     }
 }
 
@@ -103,7 +107,6 @@ int fila_espera_tamanho() {
 
 void fila_espera_free() {
     Processo* auxiliar = first;
-
     while(auxiliar != NULL) {
         first = first->proximo;
         free(auxiliar);

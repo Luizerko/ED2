@@ -10,7 +10,7 @@ void fila_espera_entra(Processo*);
 
 Processo* fila_espera_sai();
 
-Processo* fila_espera_itera();
+void fila_espera_itera();
 
 int fila_espera_tamanho();
 

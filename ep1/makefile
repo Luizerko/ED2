@@ -2,7 +2,7 @@ CFLAGS = -g -Wall -ansi -pedantic -Wno-unused-result
 
 all: main
 
-main: main.o fila_CPU.o fila_espera.o fila_impressora.o
+main: main.o fila_CPU.o fila_espera.o fila_impressora.o processo.h
 	gcc -o main main.o fila_CPU.o fila_espera.o fila_impressora.o
 
 main.o: main.c processo.h

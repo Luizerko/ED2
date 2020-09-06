@@ -8,9 +8,9 @@ Processo* fila_impressora_primeiro();
 
 void fila_impressora_entra(Processo*);
 
-Processo* fila_impressora_sai();
+Processo* fila_impressora_sai(int);
 
-Processo* fila_impressora_itera();
+Processo** fila_impressora_itera();
 
 int fila_impressora_tamanho();
 

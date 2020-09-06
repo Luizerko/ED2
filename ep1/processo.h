@@ -3,6 +3,8 @@
 #define HEADER_processo
 
 typedef struct processo {
+    int ut_inicial;
+    int li_inicial;
     int ut;
     int li;
     int permanencia_total;

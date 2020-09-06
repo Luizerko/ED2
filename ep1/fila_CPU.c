@@ -61,18 +61,25 @@ Processo* fila_CPU_sai() {
     }
     else if(n == 1) {
         Processo* auxiliar;
-
         auxiliar = first;
         first = NULL;
         last = NULL;
         n--;
 
         return auxiliar;
+    }
+    else if(n == 2) {
+        Processo* auxiliar;
+        auxiliar = first;
+        auxiliar->anterior->proximo = NULL;
+        auxiliar->proximo->anterior = NULL;
+        first = first->proximo;
+        n--;
 
+        return auxiliar;
     }
     else {
         Processo* auxiliar;
-
         auxiliar = first;
         auxiliar->anterior->proximo = first->proximo;
         auxiliar->proximo->anterior = first->anterior;
@@ -94,8 +101,8 @@ Processo* fila_CPU_itera() {
         auxiliar->permanencia_CPU++;
         auxiliar->permanencia_total++;
         auxiliar->ut--;
-
         auxiliar = auxiliar->proximo;
+
         while(auxiliar != NULL && auxiliar != first) {
             auxiliar->permanencia_CPU++;
             auxiliar->permanencia_total++;
@@ -111,14 +118,8 @@ void fila_CPU_troca() {
         printf("Erro! A fila está vazia, não se pode trocar!\n");
     }
     else if(n > 1) {
-        first->anterior = last->anterior;
-        last->proximo = first->proximo;
-        first->proximo = last;
-        last->anterior = first;
-
-        Processo* auxiliar = first;
-        first = last;
-        last = auxiliar;
+        last = first;
+        first = first->proximo;
     }
 }
 
@@ -128,7 +129,6 @@ int fila_CPU_tamanho() {
 
 void fila_CPU_free() {
     Processo* auxiliar = first;
-
     while(auxiliar != NULL) {
         first = first->proximo;
         free(auxiliar);
