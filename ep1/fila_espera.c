@@ -37,10 +37,8 @@ void fila_espera_entra(Processo* processo) {
     }
     else {
         last->proximo = processo;
-        last->proximo->anterior = last;
         last = last->proximo;
-        last->proximo = first;
-        first->anterior = last;
+        last->proximo = NULL;
         n++;
     }
 }
@@ -60,21 +58,9 @@ Processo* fila_espera_sai() {
         return auxiliar;
 
     }
-    else if(n == 2) {
-        Processo* auxiliar;
-        auxiliar = first;
-        auxiliar->anterior->proximo = NULL;
-        auxiliar->proximo->anterior = NULL;
-        first = first->proximo;
-        n--;
-
-        return auxiliar;
-    }
     else {
         Processo* auxiliar;
         auxiliar = first;
-        auxiliar->anterior->proximo = first->proximo;
-        auxiliar->proximo->anterior = first->anterior;
         first = first->proximo;
         n--;
 

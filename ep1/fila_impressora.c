@@ -37,10 +37,8 @@ void fila_impressora_entra(Processo* processo) {
     }
     else {
         last->proximo = processo;
-        last->proximo->anterior = last;
         last = last->proximo;
-        last->proximo = first;
-        first->anterior = last;
+        last->proximo = NULL;
         n++;
     }
 }
@@ -64,40 +62,49 @@ Processo* fila_impressora_sai(int iterador) {
 
         return auxiliar;
     }
-    else if(n ==2) {
-        Processo* auxiliar;
+    else if(n == 2) {
+        Processo *auxiliar, *anterior;
         auxiliar = first;
+        anterior = NULL;
         while(iterador > 1) {
+            anterior = auxiliar;
             auxiliar = auxiliar->proximo;
             iterador--;
         }
 
-        auxiliar->anterior->proximo = NULL;
-        auxiliar->proximo->anterior = NULL;
         if(auxiliar == first)
             first = first->proximo;
-        else if(auxiliar == last)
-            last = last->anterior;
-        n--;
 
-        return auxiliar;        
+        else {
+            anterior->proximo = NULL;
+            last = anterior;
+        }
+
+        n--;
+        return auxiliar;
     }
     else {
-        Processo* auxiliar;
+        Processo *auxiliar, *anterior;
         auxiliar = first;
+        anterior = NULL;
         while(iterador > 1) {
+            anterior = auxiliar;
             auxiliar = auxiliar->proximo;
             iterador--;
         }
 
-        auxiliar->anterior->proximo = auxiliar->proximo;
-        auxiliar->proximo->anterior = auxiliar->anterior;
         if(auxiliar == first)
             first = first->proximo;
-        else if(auxiliar == last)
-            last = last->anterior;
-        n--;
 
+        else if(auxiliar == last) {
+            anterior->proximo = NULL;
+            last = anterior;
+        }
+
+        else
+            anterior->proximo = auxiliar->proximo;
+
+        n--;
         return auxiliar;
     }
 }
