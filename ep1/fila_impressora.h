@@ -1,17 +1,18 @@
 #include "processo.h"
+#include "fila.h"
 
-void fila_impressora_init();
+Fila* fila_impressora_init();
 
-int fila_impressora_vazia();
+int fila_impressora_vazia(Fila*);
 
-Processo* fila_impressora_primeiro();
+Processo* fila_impressora_primeiro(Fila*);
 
-void fila_impressora_entra(Processo*);
+void fila_impressora_entra(Fila*, Processo*);
 
-Processo* fila_impressora_sai(int);
+Processo* fila_impressora_sai(Fila*, int);
 
-Processo** fila_impressora_itera();
+Processo** fila_impressora_itera(Fila*, int);
 
-int fila_impressora_tamanho();
+int fila_impressora_tamanho(Fila*);
 
-void fila_impressora_free();
+void fila_impressora_free(Fila*);

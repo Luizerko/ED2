@@ -4,29 +4,29 @@
 #include "processo.h"
 #include "fila.h"
 
-Fila* fila_impressora_init() {
+Fila* fila_ei_init() {
     Fila* fila_aux = malloc(sizeof(Fila));
     fila_aux->first = NULL;
     fila_aux->n = 0;
     return fila_aux;
 }
 
-int fila_impressora_vazia(Fila* fila_aux) {
+int fila_ei_vazia(Fila* fila_aux) {
     if(fila_aux->n == 0)
         return 1;
     return 0;
 }
 
-Processo* fila_impressora_primeiro(Fila* fila_aux) {
-    if(fila_impressora_vazia(fila_aux)) {
+Processo* fila_ei_primeiro(Fila* fila_aux) {
+    if(fila_ei_vazia(fila_aux)) {
         printf("Erro! A fila está vazia, não há primeiro!\n");
         return NULL;
     }
     return fila_aux->first;
 }
 
-void fila_impressora_entra(Fila* fila_aux, Processo* processo) {
-    if(fila_impressora_vazia(fila_aux)) {
+void fila_ei_entra(Fila* fila_aux, Processo* processo) {
+    if(fila_ei_vazia(fila_aux)) {
         fila_aux->first = processo;
         fila_aux->first->proximo = NULL;
         fila_aux->first->anterior = NULL;
@@ -48,8 +48,8 @@ void fila_impressora_entra(Fila* fila_aux, Processo* processo) {
     }
 }
 
-Processo* fila_impressora_sai(Fila* fila_aux, int iterador) {
-    if(fila_impressora_vazia(fila_aux)) {
+Processo* fila_ei_sai(Fila* fila_aux, int iterador) {
+    if(fila_ei_vazia(fila_aux)) {
         printf("Erro! A fila está vazia, não se pode remover!\n");
         return NULL;
     }
@@ -118,8 +118,8 @@ Processo* fila_impressora_sai(Fila* fila_aux, int iterador) {
     }
 }
 
-Processo** fila_impressora_itera(Fila* fila_aux, int espera) {
-    if(fila_impressora_vazia(fila_aux)) {
+Processo** fila_ei_itera(Fila* fila_aux, int espera) {
+    if(fila_ei_vazia(fila_aux)) {
         printf("Erro! A fila está vazia, não se pode iterar!\n");
         return NULL;
     }
@@ -170,15 +170,17 @@ Processo** fila_impressora_itera(Fila* fila_aux, int espera) {
     }
 }
 
-int fila_impressora_tamanho(Fila* fila_aux) {
+int fila_ei_tamanho(Fila* fila_aux) {
     return fila_aux->n;
 }
 
-void fila_impressora_free(Fila* fila_aux) {
+void fila_ei_free(Fila* fila_aux) {
     Processo* auxiliar = fila_aux->first;
-    while(auxiliar != NULL) {
+    while(fila_ei_tamanho(fila_aux) > 0) {
         fila_aux->first = fila_aux->first->proximo;
         free(auxiliar);
         auxiliar = fila_aux->first;
+        fila_aux->n--;
     }
+    free(fila_aux);
 }

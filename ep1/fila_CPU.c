@@ -129,9 +129,10 @@ int fila_CPU_tamanho() {
 
 void fila_CPU_free() {
     Processo* auxiliar = first;
-    while(auxiliar != NULL) {
+    while(fila_CPU_tamanho() > 0) {
         first = first->proximo;
         free(auxiliar);
         auxiliar = first;
+        n--;
     }
 }
