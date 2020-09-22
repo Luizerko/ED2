@@ -14,6 +14,7 @@ NUSP: 9837201
 #include "fila_ei.h"
 
 int main() {
+	/* Pega a entrada do usuário para unidades de tempo do programa e tipo de saída. */
     int duracao=-1, saida=0;
     while(duracao < 0) {
         printf("Digite a duração do programa em UT: ");
@@ -24,6 +25,7 @@ int main() {
         scanf("%d", &saida);
     }
 
+    /* Inicialização dos contadores. */
     int total_processos = 0;
     int permanencia_total = 0;
     int permanencia_espera = 0;
@@ -31,17 +33,20 @@ int main() {
     int permanencia_impressao = 0;
     float soma_razao = 0;
     int conta_tempo = 0;
-    srand(1);
+    srand(time(NULL));
 
+    /* Inicialização das filas e limite da fila de CPU. */
     int max_CPU = 10;
     fila_CPU_init();
     Fila* f_espera = fila_ei_init();
     Fila* f_impressora = fila_ei_init();
 
+    /* Laço de unidades de tempo. */
     int i = 0;
     for(i = 0; i < duracao; i++) {
         if(rand()%100 < 6) {
 
+        	/* Inicialização de um novo processo. */
             Processo *novo_processo = malloc(sizeof(Processo));
             novo_processo->ut = rand()%60 + 1;
             novo_processo->li = rand()%501;
@@ -58,6 +63,7 @@ int main() {
             printf("Unidades de tempo para processá-lo: %d\n", novo_processo->ut);
             printf("Linhas a serem impressas para o processo: %d\n", novo_processo->li);
 
+            /* Insere novo processo na fila de CPU caso não esteja cheia ou insere na fila de espera, caso a fila de CPU esteja cheia.  */
             if(!fila_CPU_cheia(max_CPU)) {
                 fila_CPU_entra(novo_processo, max_CPU);
             }
@@ -67,11 +73,15 @@ int main() {
 
         }
 
+        /* Itera sobre a fila de impressão. */
         if(!fila_ei_vazia(f_impressora)) {
             Processo** auxiliar_impressora = fila_ei_itera(f_impressora, 0);
             Processo** auxiliar_impressora_2 = malloc(3*sizeof(Processo*));
             int iterador = 0;
 
+            /* Checa o tamanho da fila de impressão e,para cada caso, estuda as possibilidades das primeiras impressões da fila - até no máximo
+            três - terem terminado de processar. Se alguma dessas - ou múltiplas dessas - terminaram de processar, são devidamente retiradas da
+            fila de impressão. */
             if(auxiliar_impressora != NULL) {
                 if(fila_ei_tamanho(f_impressora) == 1) {
                     if(auxiliar_impressora[0]->li <= 0) {
@@ -144,12 +154,14 @@ int main() {
                     }
                 }
             }
+
+            /* Imprime as impressões que foram retiradas da fila e atualiza os devidos contadores. */
             int j;
             for(j = 0; j < iterador; j++) {
                 printf("\n---------- Processo terminado - com impressão ----------\n");
                 printf("Dados iniciais: \n");
-                printf("        Tempo de processamento: %d\n", auxiliar_impressora_2[j]->ut_inicial);
-                printf("        Número de linhas: %d\n", auxiliar_impressora_2[j]->li_inicial);
+                printf("1. Tempo de processamento: %d\n", auxiliar_impressora_2[j]->ut_inicial);
+                printf("2. Número de linhas: %d\n", auxiliar_impressora_2[j]->li_inicial);
                 printf("Tempo de permanência no sistema: %d\n", auxiliar_impressora_2[j]->permanencia_total);
                 printf("Tempo na fila de espera: %d\n", auxiliar_impressora_2[j]->permanencia_espera);
                 printf("Tempo na fila da CPU: %d\n", auxiliar_impressora_2[j]->permanencia_CPU);
@@ -169,12 +181,19 @@ int main() {
             free(auxiliar_impressora_2);
         }
         
+        /* Itera sobre a fila de espera. */
         if(!fila_ei_vazia(f_espera)) fila_ei_itera(f_espera, 1);
         Processo* auxiliar_espera;
 
+        /* Itera sobre a fila de CPU. */
         if(!fila_CPU_vazia()) {
             Processo* auxiliar_CPU = fila_CPU_itera();
 
+            /* Checa se o primeiro processa da fila já acabou de ser processado ou se esse mesmo processo econtra-se por vinte unidades de tempo
+            seguidas na primeira posição. Caso o processo esteja lá por vinte unidades de tempo e ainda precise ser processado, ele vai para o
+            fim da fila. Caso ele tenha termiado, ele é retirado da fila e concluído, se não houverem linhas de impressão, ou retirado da fila
+            e colocado na fila de impressão, se houverem linhas de impressão. Após essa retirada, o primeiro processo da fila de espera entra
+            na fila da CPU. */
             if(auxiliar_CPU->ut == 0 || conta_tempo == 20) {
                 conta_tempo = -1;
                 if(auxiliar_CPU->ut == 0) {
@@ -186,6 +205,8 @@ int main() {
                     if(auxiliar_CPU->li > 0) {
                         fila_ei_entra(f_impressora, auxiliar_CPU);
                     }
+
+                    /* Imprime o processo que foi retirado da fila e não tinha linhas de impressão e atualiza os devidos contadores. */
                     else {
                         printf("\n---------- Processo terminado - sem impressão ----------\n");
                         printf("Dados iniciais: \n");
@@ -213,7 +234,11 @@ int main() {
             }
         }
 
+        /* Imprime dados da saída completa. */
         if(saida == 2) {
+            fila_ei_imprime(f_espera, 1);
+            fila_CPU_imprime();
+            fila_ei_imprime(f_impressora, 0);
             printf("\n---------- Estado das filas ----------\n");
             printf("Tamanho da fila de espera: %d\n", fila_ei_tamanho(f_espera));
             printf("Tamanho da fila da CPU: %d\n", fila_CPU_tamanho());
@@ -224,6 +249,7 @@ int main() {
         conta_tempo++;
     }
 
+    /* Imprime um sumário final de tudo que fora feito durante as unidades de tempo do programa. */
     printf("\n---------- Sumário ----------\n");
     printf("Número total de processos computados: %d\n", total_processos);
     printf("Média de permanência total: %.4f\n", (float)permanencia_total/(float)total_processos);
@@ -232,6 +258,7 @@ int main() {
     printf("Média de permanência na impressão: %.4f\n", (float)permanencia_impressao/(float)total_processos);
     printf("Média da razão entre o processamento e a permanência: %.4f\n", soma_razao/(float)total_processos);
 
+    /* Libera filas */
     fila_ei_free(f_espera);
     fila_ei_free(f_impressora);
     fila_CPU_free();

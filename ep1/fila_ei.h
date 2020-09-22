@@ -15,4 +15,6 @@ Processo** fila_ei_itera(Fila*, int);
 
 int fila_ei_tamanho(Fila*);
 
+void fila_ei_imprime(Fila*, int);
+
 void fila_ei_free(Fila*);

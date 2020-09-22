@@ -18,4 +18,6 @@ void fila_CPU_troca();
 
 int fila_CPU_tamanho();
 
+void fila_CPU_imprime();
+
 void fila_CPU_free();

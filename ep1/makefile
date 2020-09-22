@@ -15,4 +15,4 @@ fila_ei.o: fila_ei.c fila.h processo.h
 	gcc $(CFLAGS) fila_ei.c -c
 
 clean:
-	rm -rf *.o *~ main
+	rm -rf *.o main
