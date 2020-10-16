@@ -146,6 +146,7 @@ int fila_CPU_tamanho() {
     return n;
 }
 
+/* Itera sobre a fila de CPU e imprime todo seu conteúdo. */
 void fila_CPU_imprime() {
     if(fila_CPU_vazia()) {
         printf("Erro! A fila está vazia, não se pode imprimir!\n");

@@ -20,7 +20,6 @@ fila_prioridade.c
 
 static Processo** vetor;
 static int tam;
-static int ini;
 static int fim;
 static int n;
 
@@ -29,32 +28,20 @@ static void resize(int novo_tamanho) {
     int iterador = 1;
     if(n == tam) {
         while(iterador <= tam) {
-            auxiliar[iterador] = vetor[ini];
+            auxiliar[iterador] = vetor[iterador];
             iterador++;
-            ini = (ini + 1)%(tam+1);
-            if(ini == 0)
-                ini++;
         }
-        ini = 1;
-        fim = n+1;
-        tam = novo_tamanho;
-        free(vetor);
-        vetor = auxiliar;
     }
     else {
-        while(ini != fim) {
-            auxiliar[iterador] = vetor[ini];
+        while(iterador <= n) {
+            auxiliar[iterador] = vetor[iterador];
             iterador++;
-            ini = (ini + 1)%(tam+1);
-            if(ini == 0)
-                ini++;
         }
-        ini = 1;
-        fim = n+1;
-        tam = novo_tamanho;
-        free(vetor);
-        vetor = auxiliar;
     }
+    fim = n+1;
+    tam = novo_tamanho;
+    free(vetor);
+    vetor = auxiliar;
 }
 
 static void swim(int indice) {
@@ -96,7 +83,6 @@ static void sink(int indice) {
 void fila_prioridade_init() {
     vetor = NULL;
     tam = 0;
-    ini = 0;
     fim = 0;
     n = 0;
 }
@@ -106,19 +92,16 @@ void fila_prioridade_insert(Processo* processo) {
         vetor = malloc(sizeof(Processo*));
         tam = 1;
         n = 1;
+        fim = 1;
         vetor[fim] = processo;
-        fim = (fim+1)%(tam+1);
-        if(fim == 0)
-            fim++;
+        fim++;
     }
     else {
-        if(!fila_prioridade_empty() && fim == ini)
+        if(fim > tam)
             resize(2*tam);
         vetor[fim] = processo;
         swim(fim);
-        fim = (fim+1)%(tam+1);
-        if(fim == 0)
-            fim++;
+        fim++;
         n++;
     }
 }
@@ -128,18 +111,30 @@ Processo* fila_prioridade_remove() {
         if(n <= tam/4)
             resize(tam/2);
         n--;
-        Processo* auxiliar = vetor[ini];
-        if(fim-1 == 0) {
-            vetor[ini] = vetor[(fim-2)%(tam+1)];
-            fim = (fim-2)%(tam+1);
-        }
-        else {
-            vetor[ini] = vetor[(fim-1)];
-            fim--;
-        }
+        Processo* auxiliar = vetor[1];
+        fim--;
+        vetor[1] = vetor[fim];
         sink(fim);
         return auxiliar;
     }
+}
+
+void fila_prioridade_heapifica() {
+    printf("\ncomecou\n");
+    fila_prioridade_imprime();
+    int i;
+    for(i = 1; i < fim; i++) {
+        if(2*i < fim && vetor[i]->prioridade < vetor[2*i]->prioridade) {
+            swim(2*i);
+            break;
+        }
+        else if(2*i+1 < fim && vetor[i]->prioridade < vetor[2*i+1]->prioridade) {
+            swim(2*i+1);
+            break;
+        }
+    }
+    fila_prioridade_imprime();
+    printf("\nterminou\n");
 }
 
 bool fila_prioridade_empty() {
@@ -152,12 +147,27 @@ int fila_prioridade_size() {
     return n;
 }
 
+void fila_prioridade_imprime() {
+    if(fila_prioridade_empty()) {
+        printf("\nErro! A fila está vazia, não se pode imprimir!\n");
+    }
+    else {
+        printf("\n---------- Iterando sobre a fila de espera prioritária: ----------");
+        int i;
+        int contador = 1;
+        for(i = 1; i < fim; i++) {
+            printf("\nProcesso%d \n", i);
+            printf("    prioridade -> %d\n", vetor[i]->prioridade);
+            printf("    unidades de tempo -> %d\n", vetor[i]->ut);
+            printf("    linhas de impressão -> %d\n", vetor[i]->li);
+        }
+    }
+}
+
 void fila_prioridade_free() {
 
-    int i = 0;
-    for(i = ini; i < fim; i = (i+1)%(tam+1)) {
-        if(i == 0)
-            i++;
+    int i;
+    for(i = 1; i < fim; i++) {
         free(vetor[i]);
     }
 

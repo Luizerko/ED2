@@ -186,6 +186,7 @@ int fila_ei_tamanho(Fila* fila_aux) {
     return fila_aux->n;
 }
 
+/* Itera sobre a fila de espera ou a fila de impressão e imprime todo seu conteúdo. */
 void fila_ei_imprime(Fila* fila_aux, int espera) {
     if(fila_ei_vazia(fila_aux)) {
         printf("\nErro! A fila está vazia, não se pode imprimir!\n");

@@ -74,8 +74,8 @@ void fila_CPU_entra(Processo* processo, int max) {
     }
 }
 
-/* Retira o primeiro elemento da fila e retorna-o. Casos especiais: fila vazia, fila com um elemento, fila com dois elementos e 
-caso comtrês elementos ou mais. */
+/* Retira o primeiro elemento da fila e retorna-o. Casos especiais: fila vazia, fila com um elemento e fila com dois 
+elementos ou mais. */
 Processo* fila_CPU_sai() {
     if(fila_CPU_vazia()) {
         printf("Erro! A fila está vazia, não se pode remover!\n");
@@ -86,15 +86,6 @@ Processo* fila_CPU_sai() {
         auxiliar = first->proximo;
         first->proximo = NULL;
         first->anterior = NULL;
-        n--;
-
-        return auxiliar;
-    }
-    else if(n == 2) {
-        Processo* auxiliar;
-        auxiliar = first->proximo;
-        first->proximo = auxiliar->proximo;
-        first->anterior->anterior = first;
         n--;
 
         return auxiliar;
@@ -110,7 +101,7 @@ Processo* fila_CPU_sai() {
     }
 }
 
-/* Itera sobre a fila para atualizar os devidos contadores. */
+/* Itera sobre a fila para atualizar o contador de unidade de tempo de processamento do primeiro processo. */
 Processo* fila_CPU_itera() {
     if(fila_CPU_vazia()) {
         printf("Erro! A fila está vazia, não se pode iterar!\n");
@@ -119,16 +110,7 @@ Processo* fila_CPU_itera() {
     else {
         Processo* auxiliar = first->proximo;
 
-        auxiliar->permanencia_CPU++;
-        auxiliar->permanencia_total++;
-        auxiliar->ut--;
-        auxiliar = auxiliar->proximo;
-
-        while(auxiliar != NULL && auxiliar != first) {
-            auxiliar->permanencia_CPU++;
-            auxiliar->permanencia_total++;
-            auxiliar = auxiliar->proximo;
-        }
+        auxiliar->ut--; 
 
         return first->proximo;
     }
@@ -156,6 +138,7 @@ int fila_CPU_tamanho() {
     return n;
 }
 
+/* Itera sobre a fila de CPU imprimindo todos os seus processos */
 void fila_CPU_imprime() {
     if(fila_CPU_vazia()) {
         printf("Erro! A fila está vazia, não se pode imprimir!\n");

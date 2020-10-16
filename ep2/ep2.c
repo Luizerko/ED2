@@ -42,6 +42,7 @@ int main() {
 
     /* Inicialização dos contadores. */
     int total_processos = 0;
+    int total_processos_media = 0;
     int permanencia_total = 0;
     int permanencia_espera = 0;
     int permanencia_CPU = 0;
@@ -70,21 +71,24 @@ int main() {
             novo_processo->prioridade = rand()%10;
             novo_processo->ut_inicial = novo_processo->ut;
             novo_processo->li_inicial = novo_processo->li;
-            novo_processo->permanencia_total = 0;
-            novo_processo->permanencia_espera = 0;
-            novo_processo->permanencia_CPU = 0;
-            novo_processo->permanencia_impressao = 0;
+            novo_processo->permanencia_total = i;
+            novo_processo->permanencia_espera = i;
+            novo_processo->permanencia_CPU = i;
+            novo_processo->permanencia_impressao = i;
             novo_processo->proximo = NULL;
             novo_processo->anterior = NULL;
             
             printf("\n---------- Novo processo chegou ----------\n");
+            printf("Prioridade do processo: %d\n", novo_processo->prioridade);
             printf("Unidades de tempo para processá-lo: %d\n", novo_processo->ut);
             printf("Linhas a serem impressas para o processo: %d\n", novo_processo->li);
 
             /* Insere novo processo na fila de CPU caso não esteja cheia ou insere na fila de espera, caso a fila de CPU esteja cheia.  */
             if(!fila_CPU_cheia(max_CPU)) {
+                novo_processo->permanencia_espera = 0;
                 fila_CPU_entra(novo_processo, max_CPU);
             }
+            /* Insere novo processo na fila de espera por tempo e na fila de espera por prioridade. */
             else {
                 fila_ei_entra(f_espera, novo_processo);
                 fila_prioridade_insert(novo_processo);
@@ -106,6 +110,8 @@ int main() {
                     if(auxiliar_impressora[0]->li <= 0) {
                         auxiliar_impressora_2[iterador] = fila_ei_sai(f_impressora, 1);
                         iterador++;
+                        if(i >= 99)
+                            total_processos_media++;
                         total_processos++;
                     }
                 }
@@ -114,6 +120,8 @@ int main() {
                     if(auxiliar_impressora[0]->li <= 0) {
                         auxiliar_impressora_2[iterador] = fila_ei_sai(f_impressora, 1);
                         iterador++;
+                        if(i >= 99)
+                            total_processos_media++;
                         total_processos++;
                         sai_1 = 1;
                     }
@@ -121,11 +129,15 @@ int main() {
                     if(auxiliar_impressora[1]->li <= 0 && sai_1) {
                         auxiliar_impressora_2[iterador] = fila_ei_sai(f_impressora, 1);
                         iterador++;
+                        if(i >= 99)
+                            total_processos_media++;
                         total_processos++;
                     }
                     else if(auxiliar_impressora[1]->li <= 0 && !sai_1) {
                         auxiliar_impressora_2[iterador] = fila_ei_sai(f_impressora, 2);
                         iterador++;
+                        if(i >= 99)
+                            total_processos_media++;
                         total_processos++;
                     }
                 }
@@ -134,6 +146,8 @@ int main() {
                     if(auxiliar_impressora[0]->li <= 0) {
                         auxiliar_impressora_2[iterador] = fila_ei_sai(f_impressora, 1);
                         iterador++;
+                        if(i >= 99)
+                            total_processos_media++;
                         total_processos++;
                         sai_1 = 1;
                     }
@@ -141,12 +155,16 @@ int main() {
                     if(auxiliar_impressora[1]->li <= 0 && sai_1) {
                         auxiliar_impressora_2[iterador] = fila_ei_sai(f_impressora, 1);
                         iterador++;
+                        if(i >= 99)
+                            total_processos_media++;
                         total_processos++;
                         sai_2 = 1;
                     }
                     else if(auxiliar_impressora[1]->li <= 0 && !sai_1) {
                         auxiliar_impressora_2[iterador] = fila_ei_sai(f_impressora, 2);
                         iterador++;
+                        if(i >= 99)
+                            total_processos_media++;
                         total_processos++;
                         sai_2 = 1;
                     }
@@ -154,29 +172,44 @@ int main() {
                     if(auxiliar_impressora[2]->li <= 0 && sai_1 && sai_2) {
                         auxiliar_impressora_2[iterador] = fila_ei_sai(f_impressora, 1);
                         iterador++;
+                        if(i >= 99)
+                            total_processos_media++;
                         total_processos++;
                     }
                     else if(auxiliar_impressora[2]->li <= 0 && sai_1 && !sai_2) {
                         auxiliar_impressora_2[iterador] = fila_ei_sai(f_impressora, 2);
                         iterador++;
+                        if(i >= 99)
+                            total_processos_media++;
                         total_processos++;
                     }
                     else if(auxiliar_impressora[2]->li <= 0 && !sai_1 && sai_2) {
                         auxiliar_impressora_2[iterador] = fila_ei_sai(f_impressora, 2);
                         iterador++;
+                        if(i >= 99)
+                            total_processos_media++;
                         total_processos++;
                     }
                     else if(auxiliar_impressora[2]->li <= 0 && !sai_1 && !sai_2) {
                         auxiliar_impressora_2[iterador] = fila_ei_sai(f_impressora, 3);
                         iterador++;
+                        if(i >= 99)
+                            total_processos_media++;
                         total_processos++;
                     }
                 }
             }
 
-            /* Imprime as impressões que foram retiradas da fila e atualiza os devidos contadores. */
+            /* Imprime as impressões que foram retiradas da fila e atualiza os devidos contadores. Foram adicionadas as 
+            devidas atualizações sobre os parâmetros de contagem retirando, desse modo, os laços desnecessários e ineficientes
+            nas funções "itera" de cada uma das filas. Agora os parâmetros de cada fila recebem um certo valor inicial - esse valor
+            depende de quando o processo entrou em cada uma das filas - e os processos atualizam seus parâmetros de contagem 
+            novamente apenas em sua saída da fila.*/
             int j;
             for(j = 0; j < iterador; j++) {
+                auxiliar_impressora_2[j]->permanencia_total = i - auxiliar_impressora_2[j]->permanencia_total;
+                auxiliar_impressora_2[j]->permanencia_impressao = i - auxiliar_impressora_2[j]->permanencia_impressao;
+
                 printf("\n---------- Processo terminado - com impressão ----------\n");
                 printf("Dados iniciais: \n");
                 printf("1. Tempo de processamento: %d\n", auxiliar_impressora_2[j]->ut_inicial);
@@ -188,20 +221,26 @@ int main() {
                 printf("Razão entre tempo de processamento e o tempo total: %.4f\n",
                     (float)auxiliar_impressora_2[j]->ut_inicial/(float)auxiliar_impressora_2[j]->permanencia_total);
 
-                permanencia_total += auxiliar_impressora_2[j]->permanencia_total;
-                permanencia_espera += auxiliar_impressora_2[j]->permanencia_espera;
-                permanencia_CPU += auxiliar_impressora_2[j]->permanencia_CPU;
-                permanencia_impressao += auxiliar_impressora_2[j]->permanencia_impressao;
-                soma_razao += (float)auxiliar_impressora_2[j]->ut_inicial/(float)auxiliar_impressora_2[j]->permanencia_total;
-            
+                if(i >= 99) {
+                    permanencia_total += auxiliar_impressora_2[j]->permanencia_total;
+                    permanencia_espera += auxiliar_impressora_2[j]->permanencia_espera;
+                    permanencia_CPU += auxiliar_impressora_2[j]->permanencia_CPU;
+                    permanencia_impressao += auxiliar_impressora_2[j]->permanencia_impressao;
+                    soma_razao += (float)auxiliar_impressora_2[j]->ut_inicial/(float)auxiliar_impressora_2[j]->permanencia_total;
+                }
                 free(auxiliar_impressora_2[j]);
             }
 
             free(auxiliar_impressora_2);
         }
         
+        /* Checa o tamanho da fila de espera antes de qualquer processo ser retirado. Serve trocar a flag_tempo_prioridade
+        no final do laço. */
+        int tam_fila_espera = fila_ei_tamanho(f_espera);
+
         /* Itera sobre a fila de espera. */
-        if(!fila_ei_vazia(f_espera)) fila_ei_itera(f_espera, 1);
+        if(!fila_ei_vazia(f_espera))
+            fila_ei_itera(f_espera, 1);
         Processo* auxiliar_espera;
 
         /* Itera sobre a fila de CPU. */
@@ -212,21 +251,47 @@ int main() {
             seguidas na primeira posição. Caso o processo esteja lá por vinte unidades de tempo e ainda precise ser processado, ele vai para o
             fim da fila. Caso ele tenha termiado, ele é retirado da fila e concluído, se não houverem linhas de impressão, ou retirado da fila
             e colocado na fila de impressão, se houverem linhas de impressão. Após essa retirada, o primeiro processo da fila de espera entra
-            na fila da CPU. */
+            na fila da CPU. Foram adicionadas as devidas atualizações sobre os parâmetros de contagem retirando, desse modo,
+            os laços desnecessários e ineficientes nas funções "itera" de cada uma das filas. Agora os parâmetros de cada fila recebem um
+            certo valor inicial - esse valor depende de quando o processo entrou em cada uma das filas - e os processos atualizam seus parâmetros
+            de contagem novamente apenas em sua saída da fila.*/
             if(auxiliar_CPU->ut == 0 || conta_tempo == 20) {
                 conta_tempo = -1;
                 if(auxiliar_CPU->ut == 0) {
+
                     auxiliar_CPU = fila_CPU_sai();
+                    auxiliar_CPU->permanencia_CPU = i - auxiliar_CPU->permanencia_CPU;
+
                     if(!fila_ei_vazia(f_espera)) {
-                        auxiliar_espera = fila_ei_sai(f_espera, 1);
+                        if(flag_tempo_prioridade) {
+                            auxiliar_espera = fila_ei_sai(f_espera, 1);
+                            auxiliar_espera->prioridade = 10;
+                            fila_prioridade_heapifica();
+                            fila_prioridade_remove();
+                        }
+
+                        else {
+                            auxiliar_espera = fila_prioridade_remove();
+                            auxiliar_espera->proximo->anterior = auxiliar_espera->anterior;
+                            auxiliar_espera->anterior->proximo = auxiliar_espera->proximo;
+                            fila_ei_remove_externo(f_espera);
+                        }
+
+                        auxiliar_espera->permanencia_espera = i - auxiliar_espera->permanencia_espera;
+                        auxiliar_espera->permanencia_CPU = i;
                         fila_CPU_entra(auxiliar_espera, max_CPU);
                     }
+
                     if(auxiliar_CPU->li > 0) {
+                        auxiliar_CPU->permanencia_impressao = i;
                         fila_ei_entra(f_impressora, auxiliar_CPU);
                     }
 
                     /* Imprime o processo que foi retirado da fila e não tinha linhas de impressão e atualiza os devidos contadores. */
                     else {
+                        auxiliar_CPU->permanencia_total = i - auxiliar_CPU->permanencia_total;
+                        auxiliar_CPU->permanencia_impressao = 0;
+                        
                         printf("\n---------- Processo terminado - sem impressão ----------\n");
                         printf("Dados iniciais: \n");
                         printf("        Tempo de processamento: %d\n", auxiliar_CPU->ut_inicial);
@@ -237,12 +302,16 @@ int main() {
                         printf("Tempo na fila de impressão: %d\n", auxiliar_CPU->permanencia_impressao);
                         printf("Razão entre tempo de processamento e o tempo total: %.4f\n",
                             (float)auxiliar_CPU->ut_inicial/(float)auxiliar_CPU->permanencia_total);
+                        
                         total_processos++;
-
-                        permanencia_total += auxiliar_CPU->permanencia_total;
-                        permanencia_espera += auxiliar_CPU->permanencia_espera;
-                        permanencia_CPU += auxiliar_CPU->permanencia_CPU;
-                        soma_razao += (float)auxiliar_CPU->ut_inicial/(float)auxiliar_CPU->permanencia_total;
+                        
+                        if(i >= 99) {
+                            total_processos_media++;
+                            permanencia_total += auxiliar_CPU->permanencia_total;
+                            permanencia_espera += auxiliar_CPU->permanencia_espera;
+                            permanencia_CPU += auxiliar_CPU->permanencia_CPU;
+                            soma_razao += (float)auxiliar_CPU->ut_inicial/(float)auxiliar_CPU->permanencia_total;
+                        }
 
                         free(auxiliar_CPU);
                     }
@@ -256,6 +325,7 @@ int main() {
         /* Imprime dados da saída completa. */
         if(saida == 2) {
             fila_ei_imprime(f_espera, 1);
+            /*fila_prioridade_imprime();*/
             fila_CPU_imprime();
             fila_ei_imprime(f_impressora, 0);
             printf("\n---------- Estado das filas ----------\n");
@@ -265,22 +335,24 @@ int main() {
             printf("Número total de processos computados: %d\n", total_processos);
         }
 
-        /*Atualiza o contador de tempo apenas quando existem processos na CPU*/
+        /* Atualiza o contador de tempo apenas quando existem processos na CPU. */
         if(!fila_CPU_vazia())
             conta_tempo++;
-        if(!fila_ei_vazia(f_espera)) {
+
+        /* Inverte flag_tempo_prioridade para garantir que os processos sejam retirados da fila de tempo e da fila de
+        prioridade de maneira alternada. */
+        if(tam_fila_espera != fila_ei_tamanho(f_espera))
             flag_tempo_prioridade = 1 - flag_tempo_prioridade;
-        }
     }
 
     /* Imprime um sumário final de tudo que fora feito durante as unidades de tempo do programa. */
     printf("\n---------- Sumário ----------\n");
     printf("Número total de processos computados: %d\n", total_processos);
-    printf("Média de permanência total: %.4f\n", (float)permanencia_total/(float)total_processos);
-    printf("Média de permanência na espera: %.4f\n", (float)permanencia_espera/(float)total_processos);
-    printf("Média de permanência na CPU: %.4f\n", (float)permanencia_CPU/(float)total_processos);
-    printf("Média de permanência na impressão: %.4f\n", (float)permanencia_impressao/(float)total_processos);
-    printf("Média da razão entre o processamento e a permanência: %.4f\n", soma_razao/(float)total_processos);
+    printf("Média de permanência total: %.4f\n", (float)permanencia_total/(float)total_processos_media);
+    printf("Média de permanência na espera: %.4f\n", (float)permanencia_espera/(float)total_processos_media);
+    printf("Média de permanência na CPU: %.4f\n", (float)permanencia_CPU/(float)total_processos_media);
+    printf("Média de permanência na impressão: %.4f\n", (float)permanencia_impressao/(float)total_processos_media);
+    printf("Média da razão entre o processamento e a permanência: %.4f\n", soma_razao/(float)total_processos_media);
 
     /* Libera filas */
     fila_ei_free(f_espera);
