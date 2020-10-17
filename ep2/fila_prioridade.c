@@ -23,6 +23,7 @@ static int tam;
 static int fim;
 static int n;
 
+/* Função para aumentar ou diminuir o tamanho do vetor do maxheap dependendo do parâmetro novo_tamanho passado. */
 static void resize(int novo_tamanho) {
     Processo** auxiliar = malloc((novo_tamanho+1)*sizeof(Processo*));
     int iterador = 1;
@@ -44,6 +45,7 @@ static void resize(int novo_tamanho) {
     vetor = auxiliar;
 }
 
+/* Função para "subir" o elemento em vetor[indice] até a sua devida posição no maxheap. */
 static void swim(int indice) {
     int pai = indice/2;
     Processo* auxiliar = vetor[indice];
@@ -55,6 +57,7 @@ static void swim(int indice) {
     vetor[indice] = auxiliar;
 }
 
+/* Função para "descer" o elemento da raiz até a sua devida posição no maxheap. */
 static void sink(int indice) {
     int pai = 1;
     Processo* auxiliar = vetor[pai];
@@ -80,6 +83,7 @@ static void sink(int indice) {
     vetor[pai] = auxiliar;
 }
 
+/* Inicializa a fila de prioridade num vetor redimensionável. */
 void fila_prioridade_init() {
     vetor = NULL;
     tam = 0;
@@ -87,6 +91,8 @@ void fila_prioridade_init() {
     n = 0;
 }
 
+/* Insere no fim da fila de prioridade e depois, caso haja mais de um elemento na fila, "sobe" o elemento respeitando
+a propriedade de maxheap. */
 void fila_prioridade_insert(Processo* processo) {
     if(tam == 0) {
         vetor = malloc(sizeof(Processo*));
@@ -106,6 +112,8 @@ void fila_prioridade_insert(Processo* processo) {
     }
 }
 
+/* Remove o primeiro elemento da fila de prioridade e depois ajuta o heap passando o último elemento para a raiz da
+estrutura e depois o "descendo" respeitando a propriedade de maxheap. */
 Processo* fila_prioridade_remove() {
     if(!fila_prioridade_empty()) {
         if(n <= tam/4)
@@ -119,9 +127,9 @@ Processo* fila_prioridade_remove() {
     }
 }
 
+/* Conserta o erro de heap causado pela remoção em tempo e não em prioridade. O processo cuja prioriade fora aumentada
+apenas para que possa ser removido normalmente da primeira posição do heap é colocado em seu devido lugar. */
 void fila_prioridade_heapifica() {
-    printf("\ncomecou\n");
-    fila_prioridade_imprime();
     int i;
     for(i = 1; i < fim; i++) {
         if(2*i < fim && vetor[i]->prioridade < vetor[2*i]->prioridade) {
@@ -133,20 +141,21 @@ void fila_prioridade_heapifica() {
             break;
         }
     }
-    fila_prioridade_imprime();
-    printf("\nterminou\n");
 }
 
+/* Retorna 1 se a fila de prioridade está vazia e zero caso não esteja vazia */
 bool fila_prioridade_empty() {
     if(n > 0)
         return 0;
     return 1;
 }
 
+/* Retorna o tamanho da fila de prioridade. */
 int fila_prioridade_size() {
     return n;
 }
 
+/* Itera sobre a fila de prioridade e imprime todos os seus processos. */
 void fila_prioridade_imprime() {
     if(fila_prioridade_empty()) {
         printf("\nErro! A fila está vazia, não se pode imprimir!\n");
@@ -164,12 +173,7 @@ void fila_prioridade_imprime() {
     }
 }
 
+/* Libera o vetor de prioridade, uma vez que a fila de espera já liberou todos os processos em aguardo. */
 void fila_prioridade_free() {
-
-    int i;
-    for(i = 1; i < fim; i++) {
-        free(vetor[i]);
-    }
-
     free(vetor);
 }

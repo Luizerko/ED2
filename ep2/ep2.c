@@ -50,7 +50,8 @@ int main() {
     float soma_razao = 0;
     int conta_tempo = 0;
     int flag_tempo_prioridade = 1;
-    srand(time(NULL));
+    /*srand(time(NULL));*/
+    srand(3);
 
     /* Inicialização das filas e limite da fila de CPU. */
     int max_CPU = 10;
@@ -68,7 +69,9 @@ int main() {
             Processo *novo_processo = malloc(sizeof(Processo));
             novo_processo->ut = rand()%60 + 1;
             novo_processo->li = rand()%501;
-            novo_processo->prioridade = rand()%10;
+            /* Cálculo especial de prioridade para garantir que processos que entraram primeiro na fila sejam retirados
+            antes de processos que entraram depois, no caso de processos de mesma prioridade */ 
+            novo_processo->prioridade = (rand()%10 + 1)*duracao - i;
             novo_processo->ut_inicial = novo_processo->ut;
             novo_processo->li_inicial = novo_processo->li;
             novo_processo->permanencia_total = i;
@@ -79,13 +82,17 @@ int main() {
             novo_processo->anterior = NULL;
             
             printf("\n---------- Novo processo chegou ----------\n");
-            printf("Prioridade do processo: %d\n", novo_processo->prioridade);
+            printf("Prioridade do processo: %d\n", ((novo_processo->prioridade + i)/duracao) - 1);
             printf("Unidades de tempo para processá-lo: %d\n", novo_processo->ut);
             printf("Linhas a serem impressas para o processo: %d\n", novo_processo->li);
 
             /* Insere novo processo na fila de CPU caso não esteja cheia ou insere na fila de espera, caso a fila de CPU esteja cheia.  */
             if(!fila_CPU_cheia(max_CPU)) {
                 novo_processo->permanencia_espera = 0;
+                /* Ajuste do tempo de permanência em CPU para processos que são "processados" - iterados na fila da CPU -
+                já quando entram. Esse ajuste deve-se ao fato de que processos que passam pela fila de espera devem
+                esperar uma UT para começarem a ser iterados e, poranto, deve-se padronizar a contagem. */
+                novo_processo->permanencia_CPU--;
                 fila_CPU_entra(novo_processo, max_CPU);
             }
             /* Insere novo processo na fila de espera por tempo e na fila de espera por prioridade. */
@@ -207,13 +214,24 @@ int main() {
             novamente apenas em sua saída da fila.*/
             int j;
             for(j = 0; j < iterador; j++) {
+                /* Ajuste de prioridade para padrão estabelecido no enunciado */
+                auxiliar_impressora_2[j]->prioridade = auxiliar_impressora_2[j]->prioridade + auxiliar_impressora_2[j]->permanencia_total;
+                auxiliar_impressora_2[j]->prioridade = auxiliar_impressora_2[j]->prioridade/duracao;
+                auxiliar_impressora_2[j]->prioridade--;
+
                 auxiliar_impressora_2[j]->permanencia_total = i - auxiliar_impressora_2[j]->permanencia_total;
                 auxiliar_impressora_2[j]->permanencia_impressao = i - auxiliar_impressora_2[j]->permanencia_impressao;
+                /* Ajuste do tempo de permanência total para aqueles processos cujo tempo na CPU fora ajustado porque entraram
+                direto na fila_CPU sem passar na fila de espera. */
+                if(auxiliar_impressora_2[j]->permanencia_total != auxiliar_impressora_2[j]->permanencia_espera + 
+                    auxiliar_impressora_2[j]->permanencia_CPU + auxiliar_impressora_2[j]->permanencia_impressao)
+                    auxiliar_impressora_2[j]->permanencia_total++;
 
                 printf("\n---------- Processo terminado - com impressão ----------\n");
                 printf("Dados iniciais: \n");
-                printf("1. Tempo de processamento: %d\n", auxiliar_impressora_2[j]->ut_inicial);
-                printf("2. Número de linhas: %d\n", auxiliar_impressora_2[j]->li_inicial);
+                printf("        Prioridade do processo: %d\n", auxiliar_impressora_2[j]->prioridade);
+                printf("        Tempo de processamento: %d\n", auxiliar_impressora_2[j]->ut_inicial);
+                printf("        Número de linhas: %d\n", auxiliar_impressora_2[j]->li_inicial);
                 printf("Tempo de permanência no sistema: %d\n", auxiliar_impressora_2[j]->permanencia_total);
                 printf("Tempo na fila de espera: %d\n", auxiliar_impressora_2[j]->permanencia_espera);
                 printf("Tempo na fila da CPU: %d\n", auxiliar_impressora_2[j]->permanencia_CPU);
@@ -265,7 +283,7 @@ int main() {
                     if(!fila_ei_vazia(f_espera)) {
                         if(flag_tempo_prioridade) {
                             auxiliar_espera = fila_ei_sai(f_espera, 1);
-                            auxiliar_espera->prioridade = 10;
+                            auxiliar_espera->prioridade = (10 + 1)*duracao;
                             fila_prioridade_heapifica();
                             fila_prioridade_remove();
                         }
@@ -289,11 +307,17 @@ int main() {
 
                     /* Imprime o processo que foi retirado da fila e não tinha linhas de impressão e atualiza os devidos contadores. */
                     else {
+                        /* Ajuste de prioridade para padrão estabelecido no enunciado */
+                        auxiliar_CPU->prioridade = auxiliar_CPU->prioridade + auxiliar_CPU->permanencia_total;
+                        auxiliar_CPU->prioridade = auxiliar_CPU->prioridade/duracao;
+                        auxiliar_CPU->prioridade--;
+
                         auxiliar_CPU->permanencia_total = i - auxiliar_CPU->permanencia_total;
                         auxiliar_CPU->permanencia_impressao = 0;
                         
                         printf("\n---------- Processo terminado - sem impressão ----------\n");
                         printf("Dados iniciais: \n");
+                        printf("        Prioridade do processo: %d\n", auxiliar_CPU->prioridade);
                         printf("        Tempo de processamento: %d\n", auxiliar_CPU->ut_inicial);
                         printf("        Número de linhas: %d\n", auxiliar_CPU->li_inicial);
                         printf("Tempo de permanência no sistema: %d\n", auxiliar_CPU->permanencia_total);
@@ -347,15 +371,26 @@ int main() {
 
     /* Imprime um sumário final de tudo que fora feito durante as unidades de tempo do programa. */
     printf("\n---------- Sumário ----------\n");
-    printf("Número total de processos computados: %d\n", total_processos);
-    printf("Média de permanência total: %.4f\n", (float)permanencia_total/(float)total_processos_media);
-    printf("Média de permanência na espera: %.4f\n", (float)permanencia_espera/(float)total_processos_media);
-    printf("Média de permanência na CPU: %.4f\n", (float)permanencia_CPU/(float)total_processos_media);
-    printf("Média de permanência na impressão: %.4f\n", (float)permanencia_impressao/(float)total_processos_media);
-    printf("Média da razão entre o processamento e a permanência: %.4f\n", soma_razao/(float)total_processos_media);
+    if(total_processos_media > 0) {
+        printf("Número total de processos computados: %d\n", total_processos);
+        printf("Média de permanência total: %.4f\n", (float)permanencia_total/(float)total_processos_media);
+        printf("Média de permanência na espera: %.4f\n", (float)permanencia_espera/(float)total_processos_media);
+        printf("Média de permanência na CPU: %.4f\n", (float)permanencia_CPU/(float)total_processos_media);
+        printf("Média de permanência na impressão: %.4f\n", (float)permanencia_impressao/(float)total_processos_media);
+        printf("Média da razão entre o processamento e a permanência: %.4f\n", soma_razao/(float)total_processos_media);
+    }
+    else {
+        printf("Número total de processos computados: %d\n", total_processos);
+        printf("Média de permanência total: 0 (menos de 100 UTs)\n");
+        printf("Média de permanência na espera: 0 (menos de 100 UTs)\n");
+        printf("Média de permanência na CPU: 0 (menos de 100 UTs)\n");
+        printf("Média de permanência na impressão: 0 (menos de 100 UTs)\n");
+        printf("Média da razão entre o processamento e a permanência: 0 (menos de 100 UTs)\n");
+    }
 
     /* Libera filas */
     fila_ei_free(f_espera);
+    fila_prioridade_free();
     fila_ei_free(f_impressora);
     fila_CPU_free();
 

@@ -183,8 +183,6 @@ void fila_ei_imprime(Fila* fila_aux, int espera) {
 
         while(auxiliar != NULL && auxiliar != fila_aux->first) {
             printf("\nProcesso%ld: \n", contador);
-            if(espera == 1)
-                printf("    prioridade -> %d\n", auxiliar->prioridade);
             printf("    unidades de tempo -> %d\n", auxiliar->ut);
             printf("    linhas de impressão -> %d\n", auxiliar->li);
             auxiliar = auxiliar->proximo;
