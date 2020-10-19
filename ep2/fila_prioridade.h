@@ -24,7 +24,7 @@ void fila_prioridade_insert(Processo*);
 
 Processo* fila_prioridade_remove();
 
-void fila_prioridade_heapifica();
+void fila_prioridade_heapifica(int);
 
 bool fila_prioridade_empty();
 

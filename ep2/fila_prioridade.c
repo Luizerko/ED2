@@ -51,10 +51,12 @@ static void swim(int indice) {
     Processo* auxiliar = vetor[indice];
     while(indice > 1 && vetor[pai]->prioridade < auxiliar->prioridade) {
         vetor[indice] = vetor[pai];
+        vetor[indice]->indice_heap = indice;
         indice = pai;
         pai = indice/2;
     }
     vetor[indice] = auxiliar;
+    vetor[indice]->indice_heap = indice;
 }
 
 /* Função para "descer" o elemento da raiz até a sua devida posição no maxheap. */
@@ -65,6 +67,7 @@ static void sink(int indice) {
         if(2*pai+1 >= indice-1 || vetor[2*pai]->prioridade >  vetor[2*pai+1]->prioridade) {
             if(vetor[2*pai]->prioridade > auxiliar->prioridade) {
                 vetor[pai] = vetor[2*pai];
+                vetor[pai]->indice_heap = pai;
                 pai = 2*pai;
             }
             else
@@ -74,6 +77,7 @@ static void sink(int indice) {
         else {
             if(vetor[2*pai+1]->prioridade > auxiliar->prioridade) {
                 vetor[pai] = vetor[2*pai+1];
+                vetor[pai]->indice_heap = pai;
                 pai = 2*pai+1;
             }
             else
@@ -81,6 +85,7 @@ static void sink(int indice) {
         }
     }
     vetor[pai] = auxiliar;
+    vetor[pai]->indice_heap = pai;
 }
 
 /* Inicializa a fila de prioridade num vetor redimensionável. */
@@ -100,12 +105,14 @@ void fila_prioridade_insert(Processo* processo) {
         n = 1;
         fim = 1;
         vetor[fim] = processo;
+        vetor[fim]->indice_heap = 1;
         fim++;
     }
     else {
         if(fim > tam)
             resize(2*tam);
         vetor[fim] = processo;
+        vetor[fim]->indice_heap = fim;
         swim(fim);
         fim++;
         n++;
@@ -122,6 +129,7 @@ Processo* fila_prioridade_remove() {
         Processo* auxiliar = vetor[1];
         fim--;
         vetor[1] = vetor[fim];
+        vetor[1]->indice_heap = 1;
         sink(fim);
         return auxiliar;
     }
@@ -129,18 +137,8 @@ Processo* fila_prioridade_remove() {
 
 /* Conserta o erro de heap causado pela remoção em tempo e não em prioridade. O processo cuja prioriade fora aumentada
 apenas para que possa ser removido normalmente da primeira posição do heap é colocado em seu devido lugar. */
-void fila_prioridade_heapifica() {
-    int i;
-    for(i = 1; i < fim; i++) {
-        if(2*i < fim && vetor[i]->prioridade < vetor[2*i]->prioridade) {
-            swim(2*i);
-            break;
-        }
-        else if(2*i+1 < fim && vetor[i]->prioridade < vetor[2*i+1]->prioridade) {
-            swim(2*i+1);
-            break;
-        }
-    }
+void fila_prioridade_heapifica(int indice) {
+    swim(indice);
 }
 
 /* Retorna 1 se a fila de prioridade está vazia e zero caso não esteja vazia */

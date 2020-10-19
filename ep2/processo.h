@@ -22,6 +22,7 @@ typedef struct processo {
     int ut_inicial;
     int li_inicial;
     int prioridade;
+    int indice_heap;
     int ut;
     int li;
     int permanencia_total;

@@ -50,8 +50,7 @@ int main() {
     float soma_razao = 0;
     int conta_tempo = 0;
     int flag_tempo_prioridade = 1;
-    /*srand(time(NULL));*/
-    srand(3);
+    srand(time(NULL));
 
     /* Inicialização das filas e limite da fila de CPU. */
     int max_CPU = 10;
@@ -72,6 +71,7 @@ int main() {
             /* Cálculo especial de prioridade para garantir que processos que entraram primeiro na fila sejam retirados
             antes de processos que entraram depois, no caso de processos de mesma prioridade */ 
             novo_processo->prioridade = (rand()%10 + 1)*duracao - i;
+            novo_processo->indice_heap = -1;
             novo_processo->ut_inicial = novo_processo->ut;
             novo_processo->li_inicial = novo_processo->li;
             novo_processo->permanencia_total = i;
@@ -284,7 +284,7 @@ int main() {
                         if(flag_tempo_prioridade) {
                             auxiliar_espera = fila_ei_sai(f_espera, 1);
                             auxiliar_espera->prioridade = (10 + 1)*duracao;
-                            fila_prioridade_heapifica();
+                            fila_prioridade_heapifica(auxiliar_espera->indice_heap);
                             fila_prioridade_remove();
                         }
 
