@@ -12,12 +12,17 @@ Node_ARN* raiz_ARN;
 
 void adiciona_palavra(char* palavra, int contador) {
     raiz_ABB = ABB_put(raiz_ABB, palavra);
-    raiz_ARN = ARN_put(raiz_ARN, palavra);
+    //raiz_ARN = ARN_put(raiz_ARN, palavra);
 }
 
 void imprime_palavras() {
     ABB_imprime(raiz_ABB);
     ARN_imprime(raiz_ARN);
+}
+
+void imprime_numero_chaves() {
+    ABB_imprime_chave();
+    ARN_imprime_chave();
 }
 
 int main(int argc, char* argv[]) {
@@ -36,6 +41,9 @@ int main(int argc, char* argv[]) {
     file = fopen(texto, "r");
     if(file == NULL)
         exit(EXIT_FAILURE);
+
+    clock_t ini, fim;
+    ini = clock();
 
     while((c = getc(file)) != EOF) {
         if(c >= 65 && c <= 90) {
@@ -65,8 +73,13 @@ int main(int argc, char* argv[]) {
     }
 
     //imprime_palavras();
+    imprime_numero_chaves();
 
     fclose(file);
+
+    fim = clock();
+
+    printf("Tempo de execução: %lf\n", (double)(fim - ini)/CLOCKS_PER_SEC);
 
     return 0;
 }

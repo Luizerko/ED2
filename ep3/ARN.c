@@ -26,8 +26,9 @@ static Node_ARN* rotate_left(Node_ARN* raiz) {
     raiz->dir = aux->esq;
     aux->esq = raiz;
     
-    aux->cor = raiz->cor;
+    int aux2 = raiz->cor;
     raiz->cor = aux->cor;
+    aux->cor = aux2;
     
     if(raiz == first)
         first = aux;
@@ -40,12 +41,25 @@ static Node_ARN* rotate_right(Node_ARN* raiz) {
     raiz->esq = aux->dir;
     aux->dir = raiz;
 
-    flip_color(aux);
+    int aux2 = raiz->cor;
+    raiz->cor = aux->cor;
+    aux->cor = aux2;
 
     if(raiz == first)
         first = aux;
 
     return aux;
+}
+
+static Node_ARN* balance(Node_ARN* raiz) {
+    if(is_red(raiz->dir) && !is_red(raiz->esq))
+        raiz = rotate_left(raiz);
+    if(is_red(raiz->esq) && is_red(raiz->esq->esq))
+        raiz = rotate_right(raiz);
+    if(is_red(raiz->esq) && is_red(raiz->dir))
+        flip_color(raiz);
+    
+    return raiz;
 }
 
 Node_ARN* ARN_init() {
@@ -85,17 +99,14 @@ Node_ARN* ARN_put(Node_ARN* raiz, char* palavra) {
     }
     if(strcmp(raiz->palavra, palavra) < 0) {
         raiz->dir = ARN_put(raiz->dir, palavra);
-        if(is_red(raiz->dir))
-            raiz = rotate_left(raiz);
     }
     else if(strcmp(raiz->palavra, palavra) > 0) {
         raiz->esq = ARN_put(raiz->esq, palavra);
-        if(is_red(raiz->esq) && is_red(raiz->esq->esq))
-            raiz = rotate_right(raiz);
     }
     else {
         raiz->frequencia++;
     }
+    raiz = balance(raiz);
     return raiz;
 }
 
@@ -111,4 +122,8 @@ void ARN_imprime(Node_ARN* raiz) {
     printf("\n");
 
     ARN_imprime(raiz->dir);
+}
+
+void ARN_imprime_chave() {
+    printf("Número de chaves na ARN: %d\n", n);
 }

@@ -62,3 +62,7 @@ void ABB_imprime(Node_ABB* raiz) {
     ABB_imprime(raiz->dir);
 
 }
+
+void ABB_imprime_chave() {
+    printf("Número de chaves na ABB: %d\n", n);
+}
