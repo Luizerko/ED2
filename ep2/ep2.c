@@ -45,6 +45,13 @@ int main() {
     int total_processos_media = 0;
     int permanencia_total = 0;
     int permanencia_espera = 0;
+    long int espera_prioridade[10];
+    long int numero_prioridade[10];
+    int x;
+    for(x = 0; x < 10; x++) {
+        espera_prioridade[x] = 0;
+        numero_prioridade[x] = 0;
+    }
     int permanencia_CPU = 0;
     int permanencia_impressao = 0;
     float soma_razao = 0;
@@ -217,7 +224,7 @@ int main() {
                 /* Ajuste de prioridade para padrão estabelecido no enunciado */
                 auxiliar_impressora_2[j]->prioridade = auxiliar_impressora_2[j]->prioridade + auxiliar_impressora_2[j]->permanencia_total;
                 auxiliar_impressora_2[j]->prioridade = auxiliar_impressora_2[j]->prioridade/duracao;
-                auxiliar_impressora_2[j]->prioridade--;
+                auxiliar_impressora_2[j]->prioridade -= 2;
 
                 auxiliar_impressora_2[j]->permanencia_total = i - auxiliar_impressora_2[j]->permanencia_total;
                 auxiliar_impressora_2[j]->permanencia_impressao = i - auxiliar_impressora_2[j]->permanencia_impressao;
@@ -240,6 +247,8 @@ int main() {
                     (float)auxiliar_impressora_2[j]->ut_inicial/(float)auxiliar_impressora_2[j]->permanencia_total);
 
                 if(i >= 99) {
+                    espera_prioridade[auxiliar_impressora_2[j]->prioridade] += auxiliar_impressora_2[j]->permanencia_espera;
+                    numero_prioridade[auxiliar_impressora_2[j]->prioridade] += 1;
                     permanencia_total += auxiliar_impressora_2[j]->permanencia_total;
                     permanencia_espera += auxiliar_impressora_2[j]->permanencia_espera;
                     permanencia_CPU += auxiliar_impressora_2[j]->permanencia_CPU;
@@ -310,7 +319,7 @@ int main() {
                         /* Ajuste de prioridade para padrão estabelecido no enunciado */
                         auxiliar_CPU->prioridade = auxiliar_CPU->prioridade + auxiliar_CPU->permanencia_total;
                         auxiliar_CPU->prioridade = auxiliar_CPU->prioridade/duracao;
-                        auxiliar_CPU->prioridade--;
+                        auxiliar_CPU->prioridade -= 2;
 
                         auxiliar_CPU->permanencia_total = i - auxiliar_CPU->permanencia_total;
                         auxiliar_CPU->permanencia_impressao = 0;
@@ -330,6 +339,8 @@ int main() {
                         total_processos++;
                         
                         if(i >= 99) {
+                            espera_prioridade[auxiliar_CPU->prioridade] += auxiliar_CPU->permanencia_espera;
+                            numero_prioridade[auxiliar_CPU->prioridade] += 1;
                             total_processos_media++;
                             permanencia_total += auxiliar_CPU->permanencia_total;
                             permanencia_espera += auxiliar_CPU->permanencia_espera;
@@ -370,19 +381,34 @@ int main() {
     }
 
     /* Imprime um sumário final de tudo que fora feito durante as unidades de tempo do programa. */
-    printf("\n---------- Sumário ----------\n");
+    printf("\n-------------------- Sumário --------------------\n");
     if(total_processos_media > 0) {
         printf("Número total de processos computados: %d\n", total_processos);
+        for(x = 0; x < 10; x++) {
+            printf("Número total de processos computados para prioridade %d: %ld\n", x, numero_prioridade[x]);
+        }
+        printf("\n");
         printf("Média de permanência total: %.4f\n", (float)permanencia_total/(float)total_processos_media);
+        printf("\n");
         printf("Média de permanência na espera: %.4f\n", (float)permanencia_espera/(float)total_processos_media);
+        for(x = 0; x < 10; x++) {
+            if(numero_prioridade[x] > 0)
+                printf("Média de permanência na espera para prioridade %d: %.4f\n", x, (float)espera_prioridade[x]/(float)numero_prioridade[x]);
+            else
+                printf("Média de permanência na espera para prioridade %d: 0.0000\n", x);
+        }
+        printf("\n");
         printf("Média de permanência na CPU: %.4f\n", (float)permanencia_CPU/(float)total_processos_media);
+        printf("\n");
         printf("Média de permanência na impressão: %.4f\n", (float)permanencia_impressao/(float)total_processos_media);
+        printf("\n");
         printf("Média da razão entre o processamento e a permanência: %.4f\n", soma_razao/(float)total_processos_media);
     }
     else {
         printf("Número total de processos computados: %d\n", total_processos);
         printf("Média de permanência total: 0 (menos de 100 UTs)\n");
         printf("Média de permanência na espera: 0 (menos de 100 UTs)\n");
+        printf("Média de permanência na espera por prioridade: 0 (menos de 100 UTs)\n");
         printf("Média de permanência na CPU: 0 (menos de 100 UTs)\n");
         printf("Média de permanência na impressão: 0 (menos de 100 UTs)\n");
         printf("Média da razão entre o processamento e a permanência: 0 (menos de 100 UTs)\n");
