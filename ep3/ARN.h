@@ -8,6 +8,6 @@ Node_ARN* ARN_put(Node_ARN*, char*);
 
 void ARN_imprime();
 
-void ARN_imprime_chave();
+void ARN_imprime_chaves();
 
 void ARN_free();

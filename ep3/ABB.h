@@ -8,6 +8,6 @@ Node_ABB* ABB_put(Node_ABB*, char*);
 
 void ABB_imprime();
 
-void ABB_imprime_chave();
+void ABB_imprime_chaves();
 
 void ABB_free();

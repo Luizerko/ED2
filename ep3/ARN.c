@@ -124,6 +124,6 @@ void ARN_imprime(Node_ARN* raiz) {
     ARN_imprime(raiz->dir);
 }
 
-void ARN_imprime_chave() {
+void ARN_imprime_chaves() {
     printf("Número de chaves na ARN: %d\n", n);
 }
