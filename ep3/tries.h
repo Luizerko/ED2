@@ -2,7 +2,7 @@
 
 Node_trie* trie_init();
 
-Node_trie* trie_get(Node_trie*, char*);
+Node_trie* trie_get(Node_trie*, char*, int, int);
 
 Node_trie* trie_put(Node_trie*, char*, int, int);
 

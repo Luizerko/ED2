@@ -20,21 +20,32 @@ void adiciona_palavra(char* palavra, int contador) {
 }
 
 void imprime_palavras() {
-    ABB_imprime(raiz_ABB);
-    ARN_imprime(raiz_ARN);
+    //ABB_imprime(raiz_ABB);
+    //ARN_imprime(raiz_ARN);
     trie_imprime(raiz_trie, 0);
 }
 
 void imprime_numero_chaves() {
-    ABB_imprime_chaves();
-    ARN_imprime_chaves();
+    //ABB_imprime_chaves();
+    //ARN_imprime_chaves();
     trie_imprime_chaves();
+}
+
+void testa_gets(char* palavra, int tamanho) {
+    //Node_trie* aux = ABB_get(raiz_ABB, palavra);
+    //Node_trie* aux = ARN_get(raiz_ARN, palavra);
+    Node_trie* aux = trie_get(raiz_trie, palavra, 0, tamanho);
+
+    if(aux != NULL)
+        printf("Frequencia da palavra %s: %d\n",palavra, aux->frequencia);
+    else
+        printf("Palavra não encontrada na estrutura!\n");
 }
 
 int main(int argc, char* argv[]) {
 
     char* texto = argv[1];
-    printf("\n%s\n", texto);
+    printf("\nNome do arquivo: %s\n\n", texto);
 
     raiz_ABB = ABB_init();
     raiz_ARN = ARN_init();
@@ -83,14 +94,20 @@ int main(int argc, char* argv[]) {
         */
     }
 
-    //imprime_palavras();
-    imprime_numero_chaves();
+    fim = clock();
+    printf("Tempo de execução: %lf\n", (double)(fim - ini)/CLOCKS_PER_SEC);
 
     fclose(file);
 
-    fim = clock();
-
-    printf("Tempo de execução: %lf\n", (double)(fim - ini)/CLOCKS_PER_SEC);
+    //imprime_palavras();
+    
+    printf("\n");
+    imprime_numero_chaves();
+    
+    char teste_busca[50];
+    printf("\nTeste de busca. Digite uma palavra: ");
+    scanf("%s", teste_busca);
+    testa_gets(teste_busca, strlen(teste_busca));
 
     return 0;
 }

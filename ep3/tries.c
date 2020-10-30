@@ -13,6 +13,26 @@ Node_trie* trie_init() {
     return first;
 }
 
+Node_trie* trie_get(Node_trie* raiz, char* palavra, int iterador, int tamanho) {
+    if(raiz == NULL)
+        return NULL;
+    if(raiz->palavra < palavra[iterador])
+        return trie_get(raiz->dir, palavra, iterador, tamanho);
+    else if(raiz->palavra > palavra[iterador])
+        return trie_get(raiz->esq, palavra, iterador, tamanho);
+    else {
+        iterador++;
+        if(iterador == tamanho) {
+            if(raiz->frequencia > 0)
+                return raiz;
+            return NULL;
+        }
+        return trie_get(raiz->meio, palavra, iterador, tamanho);
+    }
+
+
+}
+
 Node_trie* trie_put(Node_trie* raiz, char* palavra, int iterador, int tamanho) {
     if(raiz == NULL) {
         Node_trie* novo = malloc(sizeof(Node_trie));

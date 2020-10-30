@@ -2,9 +2,9 @@
 
 make;
 
-#time ./cliente teste_pequeno.txt;
+time ./cliente teste_pequeno.txt;
 
-time ./cliente dicionario.txt;
+#time ./cliente dicionario.txt;
 
 #time ./cliente dictionary.txt;
 
