@@ -1,11 +1,12 @@
 CFLAGS = -g -Wall -Wno-unused-result
+CLINKS = -lm
 
 all: cliente
 
-cliente: cliente.o ABB.o ARN.o tries.o node_ABB.h node_ARN.h node_trie.h
-	gcc -o cliente cliente.o ABB.o ARN.o tries.o
+cliente: cliente.o ABB.o ARN.o tries.o hash_linear.o node_ABB.h node_ARN.h node_trie.h node_hash_linear.h
+	gcc -o cliente cliente.o ABB.o ARN.o tries.o hash_linear.o $(CLINKS)
 
-cliente.o: cliente.c node_ABB.h node_ARN.h node_trie.h
+cliente.o: cliente.c node_ABB.h node_ARN.h node_trie.h node_hash_linear.h
 	gcc $(CFLAGS) cliente.c -c
 
 ABB.o: ABB.c node_ABB.h
@@ -16,6 +17,9 @@ ARN.o: ARN.c node_ARN.h
 
 tries.o: tries.c node_trie.h
 	gcc $(CFLAGS) tries.c -c
+
+hash_linear.o: hash_linear.c node_hash_linear.h
+	gcc $(CFLAGS) hash_linear.c -c
 
 clean:
 	rm -rf *.o cliente
