@@ -6,11 +6,11 @@ make;
 
 #time ./cliente dicionario.txt;
 
-#time ./cliente dictionary.txt;
+time ./cliente dictionary.txt;
 
 #time ./cliente les_miserables.txt;
 
-time ./cliente bible.txt;
+#time ./cliente bible.txt;
 
 #time ./cliente sherlock.txt;
 

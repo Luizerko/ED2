@@ -122,8 +122,6 @@ Node_hash_linear** hash_linear_put(Node_hash_linear** vetor, char* palavra) {
         n++;
         if(n == tam) {
             indice_prime++;
-            //printf("colisões: %d\n", colisao);
-            //exit(0);
             vetor = resize(vetor, primes[indice_prime]);
             tam = primes[indice_prime];
         }
