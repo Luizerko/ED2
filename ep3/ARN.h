@@ -1,3 +1,14 @@
+/*
+Exercício Programa 3
+
+Aluno: Luis Vitor Zerkowski
+NUSP: 9837201
+Disciplina: Algoritmos e Estruturas de dados II
+Professora: Cristina G. Fernandes
+
+ARN.h
+*/
+
 #include "node_ARN.h"
 
 Node_ARN* ARN_init();
@@ -10,4 +21,4 @@ void ARN_imprime(Node_ARN*);
 
 void ARN_imprime_chaves();
 
-void ARN_free();
+Node_ARN* ARN_free(Node_ARN*);

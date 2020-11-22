@@ -2,17 +2,27 @@
 
 make;
 
-#time ./cliente teste_pequeno.txt;
+#for i in $(seq 1 10); do
+#	time ./cliente teste_pequeno.txt;
+#done
 
-#time ./cliente dicionario.txt;
+#for i in $(seq 1 10); do
+#	time ./cliente dicionario.txt;
+#done
 
-time ./cliente dictionary.txt;
+#time ./cliente dictionary.txt;
 
-#time ./cliente les_miserables.txt;
+#for i in $(seq 1 10); do
+#	time ./cliente les_miserables.txt;
+#done
 
-#time ./cliente bible.txt;
+#for i in $(seq 1 10); do
+	time ./cliente bible.txt;
+#done
 
-#time ./cliente sherlock.txt;
+#for i in $(seq 1 10); do
+#	time ./cliente sherlock.txt;
+#done
 
 #time ./cliente grandao.txt;
 

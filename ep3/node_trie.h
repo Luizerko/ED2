@@ -1,3 +1,14 @@
+/*
+Exercício Programa 3
+
+Aluno: Luis Vitor Zerkowski
+NUSP: 9837201
+Disciplina: Algoritmos e Estruturas de dados II
+Professora: Cristina G. Fernandes
+
+node_trie.h
+*/
+
 #ifndef HEADER_node_trie
 
 #define HEADER_node_trie

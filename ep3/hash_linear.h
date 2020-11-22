@@ -1,3 +1,14 @@
+/*
+Exercício Programa 3
+
+Aluno: Luis Vitor Zerkowski
+NUSP: 9837201
+Disciplina: Algoritmos e Estruturas de dados II
+Professora: Cristina G. Fernandes
+
+hash_linear.h
+*/
+
 #include "node_hash_linear.h"
 
 Node_hash_linear** hash_linear_init();
@@ -10,4 +21,4 @@ void hash_linear_imprime(Node_hash_linear**);
 
 void hash_linear_imprime_chaves();
 
-void hash_linear_free();
+void hash_linear_free(Node_hash_linear**);

@@ -3,8 +3,8 @@ CLINKS = -lm
 
 all: cliente
 
-cliente: cliente.o ABB.o ARN.o tries.o hash_linear.o hash_encadeamento.o node_ABB.h node_ARN.h node_trie.h node_hash_linear.h node_hash_encadeamento.h
-	gcc -o cliente cliente.o ABB.o ARN.o tries.o hash_linear.o hash_encadeamento.o $(CLINKS)
+cliente: cliente.o ABB.o ARN.o tries.o hash_linear.o hash_encadeamento.o hash_encadeamento_MTF.o node_ABB.h node_ARN.h node_trie.h node_hash_linear.h node_hash_encadeamento.h
+	gcc -o cliente cliente.o ABB.o ARN.o tries.o hash_linear.o hash_encadeamento.o hash_encadeamento_MTF.o $(CLINKS)
 
 cliente.o: cliente.c node_ABB.h node_ARN.h node_trie.h node_hash_linear.h node_hash_encadeamento.h
 	gcc $(CFLAGS) cliente.c -c
@@ -23,6 +23,9 @@ hash_linear.o: hash_linear.c node_hash_linear.h
 
 hash_encadeamento.o: hash_encadeamento.c node_hash_encadeamento.h
 	gcc $(CFLAGS) hash_encadeamento.c -c
+
+hash_encadeamento_MTF.o: hash_encadeamento_MTF.c node_hash_encadeamento.h
+	gcc $(CFLAGS) hash_encadeamento_MTF.c -c
 
 clean:
 	rm -rf *.o cliente
